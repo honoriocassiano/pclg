@@ -1,1 +1,2 @@
-# pclg
+# PClG - Procedural Cloud Generator
+
