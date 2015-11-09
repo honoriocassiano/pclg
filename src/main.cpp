@@ -1,12 +1,3 @@
-/*
-
-
-  Simple Demo for GLSL
-
-  www.lighthouse3d.com
-
-*/
-
 #include <GL/glew.h>
 #include <GL/glut.h>
 #include <iostream>
@@ -14,9 +5,13 @@
 
 #include "shaders.h"
 #include "textfile.h"
+#include "shader/ShaderManager.h"
+#include "noise/Perlin.h"
 
+noise::Perlin * perlin_noise;
 
-GLint loc;
+GLint loc_time;
+GLint loc_octaves;
 GLuint v,f,f2,p;
 
 float lpos[4] = {1.0,0.0,1.0,0.0};
@@ -40,8 +35,6 @@ void changeSize(int w, int h) {
 	// Set the correct perspective.
 	gluPerspective(45,ratio,1,100);
 	glMatrixMode(GL_MODELVIEW);
-
-
 }
 
 float a = 1;
@@ -58,7 +51,7 @@ void renderScene(void) {
 	glLightfv(GL_LIGHT0, GL_POSITION, lpos);
 	glRotatef(a,0,1,0);
 
-	glUniform1fARB(loc, a);
+	perlin_noise->update(a);
 
 	glutSolidTeapot(1);
 	a+=0.001;
@@ -85,7 +78,6 @@ int printOglError(char *file, int line)
     glErr = glGetError();
     while (glErr != GL_NO_ERROR)
     {
-        //printf("glError in file %s @ line %d: %s\n", file, line, gluErrorString(glErr));
         std::cout << "glError in file " << file << " @ line" << line << ":" << gluErrorString(glErr) << std::endl;
         retCode = 1;
         glErr = glGetError();
@@ -106,7 +98,6 @@ void printShaderInfoLog(GLuint obj)
     {
         infoLog = (char *)malloc(infologLength);
         glGetShaderInfoLog(obj, infologLength, &charsWritten, infoLog);
-		//printf("%s\n",infoLog);
 		std::cout << infoLog;
 
         free(infoLog);
@@ -125,7 +116,6 @@ void printProgramInfoLog(GLuint obj)
     {
         infoLog = (char *)malloc(infologLength);
         glGetProgramInfoLog(obj, infologLength, &charsWritten, infoLog);
-		//printf("%s\n",infoLog);
 		std::cout << infoLog;
 
         free(infoLog);
@@ -135,45 +125,8 @@ void printProgramInfoLog(GLuint obj)
 
 
 void setShaders() {
+	perlin_noise->show();
 
-	char *vs = NULL,*fs = NULL,*fs2 = NULL;
-
-	v = glCreateShader(GL_VERTEX_SHADER);
-	f = glCreateShader(GL_FRAGMENT_SHADER);
-	f2 = glCreateShader(GL_FRAGMENT_SHADER);
-
-	vs = textFileRead(RES_TOON_VERTEX.c_str());
-	fs = textFileRead(RES_TOON_FRAGMENT.c_str());
-
-	if(!vs || !fs) {
-		std::cout << "Shader file not found!\n";
-		exit(1);
-	}
-
-	const char * vv = vs;
-	const char * ff = fs;
-
-	glShaderSource(v, 1, &vv,NULL);
-	glShaderSource(f, 1, &ff,NULL);
-
-	free(vs);free(fs);
-
-	glCompileShader(v);
-	glCompileShader(f);
-
-	printShaderInfoLog(v);
-	printShaderInfoLog(f);
-	printShaderInfoLog(f2);
-
-	p = glCreateProgram();
-	glAttachShader(p,v);
-	glAttachShader(p,f);
-
-	glLinkProgram(p);
-	printProgramInfoLog(p);
-
-	glUseProgram(p);
-	loc = glGetUniformLocation(p,"time");
 }
 
 int main(int argc, char **argv) {
@@ -182,6 +135,8 @@ int main(int argc, char **argv) {
 	glutInitWindowPosition(100,100);
 	glutInitWindowSize(320,320);
 	glutCreateWindow("Procedural Cloud Generator");
+
+	perlin_noise = new noise::Perlin(20);
 
 	glutDisplayFunc(renderScene);
 	glutIdleFunc(renderScene);

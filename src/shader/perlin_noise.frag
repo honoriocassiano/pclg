@@ -1,32 +1,5 @@
-/*
-varying vec3 lightDir,normal;
-
-void main()
-{
-
-	float intensity;
-	vec4 color;
-	
-	// normalizing the lights position to be on the safe side
-	
-	vec3 n = normalize(normal);
-	
-	intensity = dot(lightDir,n);
-	
-	if (intensity > 0.95)
-		color = vec4(1.0,0.5,0.5,1.0);
-	else if (intensity > 0.5)
-		color = vec4(0.6,0.3,0.3,1.0);
-	else if (intensity > 0.25)
-		color = vec4(0.4,0.2,0.2,1.0);
-	else
-		color = vec4(0.2,0.1,0.1,1.0);
-	
-	gl_FragColor = color;
-} 
-*/
-
 uniform float time;
+uniform int octaves;
  
 vec4 mod289(vec4 x)
 {
@@ -157,11 +130,11 @@ float pattern(in vec2 p) {
     return fbm( p + 4.0*r ,oc,l,g);    
 }
  
-float pattern2( in vec2 p, out vec2 q, out vec2 r , in float time)
+float pattern2( in vec2 p, out vec2 q, out vec2 r , in float time, in int octaves)
 {
     float l = 2.3;
     float g = 0.4;
-    int oc = 10; 
+	int oc = octaves;
      
     q.x = fbm( p + vec2(time,time),oc,l,g);
     q.y = fbm( p + vec2(5.2*time,1.3*time) ,oc,l,g);
@@ -178,7 +151,7 @@ void main() {
     vec2 p = -1.0 + 2.0 * q;
     vec2 qq;
     vec2 r;
-    float color = pattern2(p,qq,r,time);
+    float color = pattern2(p,qq,r,time, octaves);
      
     vec4 c = vec4(color,color,color,color);
     c *= 3.5;
