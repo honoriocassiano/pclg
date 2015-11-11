@@ -6,9 +6,12 @@
  */
 
 #include <GL/glew.h>
+#include <GL/gl.h>
 #include <GL/glut.h>
+#include <vector>
 
 #include "../shader/ShaderManager.h"
+#include "../sky/Surface.h"
 
 #ifndef PERLIN_H_
 #define PERLIN_H_
@@ -20,10 +23,12 @@ public:
 	Perlin(int);
 	virtual ~Perlin();
 
-	void update(float);
-	void show();
+	void update(float, bool = true);
+	void apply_to(sky::Surface *);
+	void show(bool = true);
 
 private:
+	std::vector<sky::Surface *> surfaces;
 	int octaves;
 	GLint time_location;
 	GLint octaves_location;

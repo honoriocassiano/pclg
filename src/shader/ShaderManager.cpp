@@ -9,7 +9,8 @@
 
 namespace shader {
 
-GLint ShaderManager::createShader(std::string file_location, ShaderType type) throw(std::string) {
+GLint ShaderManager::createShader(std::string file_location, ShaderType type,
+		GLint program_to_attach) throw (std::string) {
 
 	GLint shader, program;
 
@@ -24,6 +25,8 @@ GLint ShaderManager::createShader(std::string file_location, ShaderType type) th
 	if (shader_text == NULL) {
 		//std::cout << "Shader file not found!\n";
 		throw "Shader file \"" + file_location + "\" not found!\n";
+	} else {
+		std::cout << "Shader created from file \"" << file_location << "\"\n";
 	}
 
 	const char * ff = shader_text;
@@ -34,17 +37,22 @@ GLint ShaderManager::createShader(std::string file_location, ShaderType type) th
 
 	glCompileShader(shader);
 
-	program = glCreateProgram();
+	if (program_to_attach == 0) {
+		// std::cout << "Creating new program\n";
+		program = glCreateProgram();
+	} else {
+		// std::cout << "Reusing program\n";
+		program = program_to_attach;
+	}
 
 	glAttachShader(program, shader);
 	glLinkProgram(program);
 
-	glUseProgram(program);
-
 	return program;
 }
 
-GLint ShaderManager::getUniformLocation(const GLint program, const std::string name) {
+GLint ShaderManager::getUniformLocation(const GLint program,
+		const std::string name) {
 	return glGetUniformLocation(program, name.c_str());
 }
 
@@ -56,4 +64,11 @@ void ShaderManager::setUniformFloatValue(const GLint location, float value) {
 	glUniform1fARB(location, value);
 }
 
+void ShaderManager::setProgramState(const GLint program, bool state) {
+	if (state) {
+		glUseProgram(program);
+	} else {
+		glUseProgram(0);
+	}
+}
 } /* namespace shader */

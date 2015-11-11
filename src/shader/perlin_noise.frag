@@ -1,5 +1,6 @@
 uniform float time;
 uniform int octaves;
+//attribute float apply;
  
 vec4 mod289(vec4 x)
 {
@@ -146,15 +147,19 @@ float pattern2( in vec2 p, out vec2 q, out vec2 r , in float time, in int octave
 }
  
 void main() {
+    
+//	if(gl_FragCoord.x < < {// || gl_FragCoord.y >= 0) {
+	    vec2 q = gl_FragCoord.xy / vec2(640.0,480.0);
+	    vec2 p = -1.0 + 2.0 * q;
+	    vec2 qq;
+	    vec2 r;
+	    float color = pattern2(p,qq,r,time, octaves);
+	     
+	    vec4 c = vec4(color,color,color,color);
+	    c *= 3.5;
      
-    vec2 q = gl_FragCoord.xy / vec2(640.0,480.0);
-    vec2 p = -1.0 + 2.0 * q;
-    vec2 qq;
-    vec2 r;
-    float color = pattern2(p,qq,r,time, octaves);
-     
-    vec4 c = vec4(color,color,color,color);
-    c *= 3.5;
-     
-    gl_FragColor = c;
+	    gl_FragColor = c;
+//	} else {
+//		gl_FragColor = vec3(1.0, 1.0, 0.0);//gl_Color;
+//	}
 }

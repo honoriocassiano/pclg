@@ -20,11 +20,13 @@ enum class ShaderType { VERTEX, FRAGMENT };
 
 class ShaderManager {
 public:
-	static GLint createShader(std::string, ShaderType) throw(std::string);
+	static GLint createShader(std::string, ShaderType, GLint = 0) throw(std::string);
 	static GLint getUniformLocation(const GLint, const std::string);
 
 	static void setUniformIntValue(const GLint, int);
 	static void setUniformFloatValue(const GLint, float);
+
+	static void setProgramState(const GLint, bool);
 };
 
 } /* namespace shader */
