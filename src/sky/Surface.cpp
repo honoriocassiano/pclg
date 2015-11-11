@@ -9,13 +9,8 @@
 
 namespace sky {
 
-Surface::Surface() {
-	// TODO Auto-generated constructor stub
+Surface::Surface() {}
 
-}
-
-Surface::~Surface() {
-	// TODO Auto-generated destructor stub
-}
+Surface::~Surface() {}
 
 } /* namespace sky */

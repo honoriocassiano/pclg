@@ -42,7 +42,7 @@ void changeSize(int w, int h) {
 	glMatrixMode(GL_MODELVIEW);
 }
 
-float a = 1;
+float elapsed_time = 1;
 
 void renderScene(void) {
 
@@ -52,13 +52,12 @@ void renderScene(void) {
 	gluLookAt(0.0 + dx, 1.0 + dy, 5.0 + dz, 0.0, 0.0, 0.0, 0.0f, 1.0f, 0.0f);
 
 	glLightfv(GL_LIGHT0, GL_POSITION, lpos);
-	glRotatef(a, 0, 1, 0);
+	glRotatef(elapsed_time, 0, 1, 0);
 
-	a += 0.001;
+	elapsed_time += 0.001;
 
-	perlin_noise->update(a);
-	//skyDome->update(a);
-	//glutSolidTeapot(1);
+	perlin_noise->update(elapsed_time);
+//	skyDome->update(a);
 
 	glutSwapBuffers();
 }
@@ -145,6 +144,7 @@ void specialKeyFuncton(int key, int x, int y) {
 void showPerlin() {
 	perlin_noise->apply_to(skyDome);
 	perlin_noise->show();
+	//skyDome->show();
 }
 
 int main(int argc, char **argv) {
@@ -155,7 +155,7 @@ int main(int argc, char **argv) {
 	glutCreateWindow("Procedural Cloud Generator");
 
 	perlin_noise = new noise::Perlin(20);
-	skyDome = new sky::SkyDome(2.0);
+	skyDome = new sky::SkyDome(2.0, 5);
 
 	glutDisplayFunc(renderScene);
 	glutIdleFunc(renderScene);

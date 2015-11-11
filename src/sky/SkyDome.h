@@ -5,6 +5,8 @@
  *      Author: cassiano
  */
 
+#include <math.h>
+
 #include "../noise/Perlin.h"
 #include "Surface.h"
 
@@ -15,7 +17,7 @@ namespace sky {
 
 class SkyDome : public Surface {
 public:
-	SkyDome(GLfloat);
+	SkyDome(GLfloat, int);
 	virtual ~SkyDome();
 
 	virtual void show();
@@ -23,10 +25,11 @@ public:
 
 private:
 	GLfloat ray;
-
-//	GLint program;
-//	GLint octaves;
-//	GLint time_l;
+	int vertex_size;
+	int angle_step;
+	GLuint triangleVBO;
+	GLfloat * vertex;
+	static GLfloat to_rad;
 };
 
 } /* namespace shader */
