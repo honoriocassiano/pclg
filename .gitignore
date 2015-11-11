@@ -26,4 +26,4 @@
 *.exe
 *.out
 *.app
-/Debug/
+/Debug/*
