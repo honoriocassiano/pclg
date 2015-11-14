@@ -10,8 +10,22 @@
 #include "noise/Perlin.h"
 #include "sky/SkyDome.h"
 
+#define USE_PERLIN 0
+#define DEBUG_CAMERA 0
+
 noise::Perlin * perlin_noise;
 sky::SkyDome * skyDome;
+
+static const float TO_RAD = M_PI / 180.0;
+
+float deltha = 0.0;
+float theta = 0.0;
+float camera_ray = 5;
+
+float prev_deltha = -1.0;
+float prev_theta = -1.0;
+
+float x, y, z;
 
 GLint loc_time;
 GLint loc_octaves;
@@ -46,18 +60,43 @@ float elapsed_time = 1;
 
 void renderScene(void) {
 
+	if (prev_deltha != deltha || prev_theta != theta) {
+		float theta_rad = theta * TO_RAD;
+		float deltha_rad = deltha * TO_RAD * -1;
+
+		float cos_x_angle = cos(theta_rad);
+		float cos_y_angle = cos(deltha_rad);
+
+		float sin_x_angle = sin(theta_rad);
+		float sin_y_angle = sin(deltha_rad);
+
+		x = camera_ray * sin_x_angle * sin_y_angle;
+		y = camera_ray * cos_x_angle;
+		z = camera_ray * sin_x_angle * cos_y_angle;
+
+		if (DEBUG_CAMERA) {
+			std::cout << "(x, y, z) => (" << x << ", " << y << ", " << z
+					<< ")\n";
+		}
+
+		prev_deltha = deltha;
+		prev_theta = theta;
+	}
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glLoadIdentity();
-	gluLookAt(0.0 + dx, 1.0 + dy, 5.0 + dz, 0.0, 0.0, 0.0, 0.0f, 1.0f, 0.0f);
+	gluLookAt(x, y, z, 0.0, 0.0, 0.0, 0.0f, 1.0f, 0.0f);
 
 	glLightfv(GL_LIGHT0, GL_POSITION, lpos);
 	glRotatef(elapsed_time, 0, 1, 0);
 
 	elapsed_time += 0.001;
 
-	perlin_noise->update(elapsed_time);
-//	skyDome->update(a);
+	if (USE_PERLIN) {
+		perlin_noise->update(elapsed_time);
+	} else {
+		skyDome->update(elapsed_time);
+	}
 
 	glutSwapBuffers();
 }
@@ -123,28 +162,28 @@ void specialKeyFuncton(int key, int x, int y) {
 
 	switch (key) {
 		case GLUT_KEY_UP:
-			dy += 1.0;
-
+			theta += 1.0;
 			break;
 		case GLUT_KEY_DOWN:
-			dy -= 1.0;
-
+			theta -= 1.0;
 			break;
 		case GLUT_KEY_LEFT:
-			dx += 1.0;
-
+			deltha += 1.0;
 			break;
 		case GLUT_KEY_RIGHT:
-			dx -= 1.0;
-
+			deltha -= 1.0;
 			break;
 	}
 }
 
 void showPerlin() {
-	perlin_noise->apply_to(skyDome);
-	perlin_noise->show();
-	//skyDome->show();
+
+	if (USE_PERLIN) {
+		perlin_noise->apply_to(skyDome);
+		perlin_noise->show();
+	} else {
+		skyDome->show();
+	}
 }
 
 int main(int argc, char **argv) {
@@ -155,7 +194,7 @@ int main(int argc, char **argv) {
 	glutCreateWindow("Procedural Cloud Generator");
 
 	perlin_noise = new noise::Perlin(20);
-	skyDome = new sky::SkyDome(2.0, 5);
+	skyDome = new sky::SkyDome(1.5, 10);
 
 	glutDisplayFunc(renderScene);
 	glutIdleFunc(renderScene);
@@ -165,7 +204,7 @@ int main(int argc, char **argv) {
 
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(1.0, 1.0, 1.0, 1.0);
-	glEnable(GL_CULL_FACE);
+	//glEnable(GL_CULL_FACE);
 
 	glewInit();
 	if (glewIsSupported("GL_VERSION_2_0"))
