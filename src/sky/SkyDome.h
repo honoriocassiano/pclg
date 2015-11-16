@@ -6,6 +6,7 @@
  */
 
 #include <math.h>
+#include <fstream>
 
 #include "../noise/Perlin.h"
 #include "Surface.h"
@@ -36,6 +37,7 @@ public:
 	virtual void show();
 	virtual void update(float);
 	virtual void makePoints();
+	virtual void makeIndexes();
 
 private:
 	GLfloat ray;
@@ -44,6 +46,11 @@ private:
 	GLuint triangleVBO;
 	GLfloat * vertex;
 	static GLfloat to_rad;
+
+	int step_height;
+	int step_circle;
+
+	int * indexes;
 };
 
 } /* namespace shader */
