@@ -39,6 +39,7 @@ public:
 	virtual void makePoints();
 	virtual void makeIndexes();
 
+
 private:
 	GLfloat ray;
 	int vertex_size;
@@ -50,7 +51,15 @@ private:
 	int step_height;
 	int step_circle;
 
+	GLfloat step_circle_angle;
+	GLfloat step_height_angle;
+
+	GLuint vertex_id;
+	GLuint indexes_id;
+
 	int * indexes;
+
+	void makeVBO();
 };
 
 } /* namespace shader */
