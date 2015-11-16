@@ -17,6 +17,12 @@ GLfloat SkyDome::to_rad = M_PI / 180.0;
 SkyDome::SkyDome(GLfloat ray, int angle_step) {
 	this->ray = ray;
 	this->angle_step = angle_step;
+
+	indexes = nullptr;
+
+	step_circle = 4;
+	step_height = 3;
+
 	//this->vertex_size = (int) 6 * ((360 / angle_step) + 1);
 	//this->vertex = new GLfloat[vertex_size];
 
@@ -40,6 +46,8 @@ void SkyDome::show() {
 	GLfloat v_z = 0.0;
 
 	makePoints();
+
+	makeIndexes();
 
 	/*
 	 for (int i = 0, j = 0; i <= 360; i += angle_step, j += 6) {
@@ -71,6 +79,46 @@ void SkyDome::show() {
 
 	update(0);
 }
+
+void SkyDome::makeIndexes() {
+
+	std::ofstream file;
+	file.open("points.txt");
+
+	indexes = new int[6 * step_circle * step_height];
+
+	for (int i = 1; i <= step_height; ++i) {
+
+		int first_circle_point = (i-1) * step_circle;
+		int actual_circle_point = first_circle_point;
+
+		for (int j = 0; j < step_circle; ++j) {
+			int position = j*6;
+
+			int last = actual_circle_point + step_circle;
+
+			indexes[position] = actual_circle_point;
+
+			actual_circle_point = (actual_circle_point + 1) % (actual_circle_point + step_circle);
+
+			indexes[position + 1] = actual_circle_point;
+			indexes[position + 3] = actual_circle_point;
+
+			//*********************************
+
+			indexes[position + 2] = last;
+			indexes[position + 4] = last;
+
+			indexes[position + 5] = last + 1;
+
+			file << "(" << indexes[position] << ", " << indexes[position+1] << ", " << indexes[position+2] << ")\t";
+			file << "(" << indexes[position+3] << ", " << indexes[position+4] << ", " << indexes[position+5] << ")\n";
+		}
+	}
+	file.close();
+
+}
+
 void SkyDome::update(float time) {
 
 	// Set values here
