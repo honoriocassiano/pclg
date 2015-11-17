@@ -18,8 +18,8 @@ SkyDome::SkyDome(GLfloat ray, int angle_step) {
 	this->radius = ray;
 	this->angle_step = angle_step;
 
-	step_circle = 10;
-	step_height = 5;
+	step_circle = 20;
+	step_height = 10;
 
 	step_circle_angle = 360.0 / step_circle;
 	step_height_angle = 90.0 / step_height;
@@ -82,9 +82,6 @@ void SkyDome::show() {
 
 void SkyDome::makeIndexes() {
 
-//	std::ofstream file;
-//	file.open("points.txt");
-
 	int position = 0;
 
 	for (int i = 1; i <= step_height; ++i) {
@@ -98,18 +95,16 @@ void SkyDome::makeIndexes() {
 
 			indexes[position] = actual_circle_point;
 
-			//std::cout << actual_circle_point << std::endl;
-
 			actual_circle_point = (actual_circle_point + 1)
 					% (actual_circle_point + step_circle);
 
 			indexes[position + 1] = actual_circle_point;
-			indexes[position + 3] = actual_circle_point;
-
-			//*********************************
+			//indexes[position + 3] = actual_circle_point;
+			indexes[position + 3] = last;
 
 			indexes[position + 2] = last;
-			indexes[position + 4] = last;
+			//indexes[position + 4] = last;
+			indexes[position + 4] = actual_circle_point;
 
 			indexes[position + 5] = last + 1;
 
@@ -122,8 +117,9 @@ void SkyDome::update(float time) {
 
 	// Set values here
 
-	glColor3f(0.0, 0.0, 0.0);
-	glPolygonMode( GL_FRONT, GL_LINE);
+	//glColor3f(0.0, 0.0, 0.0);
+	//glPolygonMode( GL_BACK, GL_LINE);
+	glPolygonMode( GL_FRONT_AND_BACK, GL_FILL);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vertex_id);	//use this VBO
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexes_id);	//and index
@@ -135,10 +131,8 @@ void SkyDome::update(float time) {
 
 	// SEGUNDO PARÂMETRO: QUANTIDADE DE ELEMENTOS A SEREM DESENHADOS
 
-	glDrawElements(GL_TRIANGLES, indexes_size,
-	GL_UNSIGNED_INT, (void *) 0);		//draw it
-
-//	glDrawArrays(GL_TRIANGLE_STRIP, 0, indexes_size);
+	glDrawElements(GL_TRIANGLES, indexes_size - 1,
+	GL_UNSIGNED_INT, (void *) 0);
 
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -147,23 +141,15 @@ void SkyDome::update(float time) {
 
 void SkyDome::makeVBO() {
 
-	//GLfloat vertex[] = {0,2,0,-2,-2,0,2,-2,0};
-	//int indexes[] = {0,1,2};	//index array
-	glGenBuffers(1, &vertex_id);	//generate an index for the vertexbuffer
-	glGenBuffers(1, &indexes_id);	//and the indices
-	glBindBuffer(GL_ARRAY_BUFFER, vertex_id);	//use vbo as ARRAY_BUFFER
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexes_id);//use ind as ELEMENT_ARRAY_BUFFER (index-array)
-//	glBufferData(GL_ARRAY_BUFFER, vertex_size, vertex, GL_STATIC_DRAW);	//fill up the array with vertex and color-data
-//	glBufferData(GL_ELEMENT_ARRAY_BUFFER, vertex_size * 2, indexes, GL_STATIC_DRAW);	//this one with indicis
-
-//	glBufferData(GL_ARRAY_BUFFER, sizeof(vertex), vertex, GL_STATIC_DRAW);	//fill up the array with vertex and color-data
-//	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indexes), indexes,
-//			GL_STATIC_DRAW);	//this one with indicis
+	glGenBuffers(1, &vertex_id);
+	glGenBuffers(1, &indexes_id);
+	glBindBuffer(GL_ARRAY_BUFFER, vertex_id);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexes_id);
 
 	glBufferData(GL_ARRAY_BUFFER, vertex_size * sizeof(GLfloat), vertex,
-	GL_STATIC_DRAW);	//fill up the array with vertex and color-data
+	GL_STATIC_DRAW);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexes_size * sizeof(int), indexes,
-	GL_STATIC_DRAW);	//this one with indicis
+	GL_STATIC_DRAW);
 }
 
 void SkyDome::makePoints() {
@@ -193,9 +179,6 @@ void SkyDome::makePoints() {
 			vertex[counter] = x;
 			vertex[counter + 1] = y;
 			vertex[counter + 2] = z;
-
-//			std::cout << vertex[counter] << " " << vertex[counter+1] << " " << vertex[counter+2] << std::endl;
-//			std::cout << i << std::endl;
 
 			counter += 3;
 		}
