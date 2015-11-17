@@ -20,7 +20,7 @@ static const float TO_RAD = M_PI / 180.0;
 
 float deltha = 0.0;
 float theta = 0.0;
-float camera_ray = 5;
+float camera_ray = 6;
 
 float prev_deltha = -1.0;
 float prev_theta = -1.0;

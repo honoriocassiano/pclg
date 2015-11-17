@@ -14,7 +14,8 @@
 #ifndef SKYDOME_H_
 #define SKYDOME_H_
 
-#define DEBUG_POINTS 1
+#define DEBUG_POINTS 0
+#define DEBUG_INDEX 0
 
 #define Band_Power  4  // 2^Band_Power = Total Points in a band.
 #define Band_Points 16 // 16 = 2^Band_Power
@@ -41,8 +42,9 @@ public:
 
 
 private:
-	GLfloat ray;
+	GLfloat radius;
 	int vertex_size;
+	int indexes_size;
 	int angle_step;
 	GLuint triangleVBO;
 	GLfloat * vertex;
@@ -65,3 +67,4 @@ private:
 } /* namespace shader */
 
 #endif /* SKYDOME_H_ */
+
