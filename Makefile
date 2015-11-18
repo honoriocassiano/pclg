@@ -1,5 +1,5 @@
 CXX=g++
-FLAGS= -std=c++11
+FLAGS= -std=c++11 -Wall
 C_FLAGS= -c
 LIBS= -lGL -lGLU -lglut -lGLEW -lm
 

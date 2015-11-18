@@ -14,68 +14,63 @@ namespace sky {
 
 GLfloat SkyDome::to_rad = M_PI / 180.0;
 
-SkyDome::SkyDome(GLfloat ray, int angle_step) {
-	this->radius = ray;
-	this->angle_step = angle_step;
+SkyDome::SkyDome(GLfloat radius, int horizontal_sections,
+		int vertical_sections) {
+	this->radius = radius;
 
-	step_circle = 20;
-	step_height = 10;
+	this->h_sections = horizontal_sections;
+	this->v_sections = vertical_sections;
 
-	step_circle_angle = 360.0 / step_circle;
-	step_height_angle = 90.0 / step_height;
+	step_circle_angle = 360.0 / h_sections;
+	step_height_angle = 90.0 / v_sections;
 
-	//this->vertex_size = (int) 6 * ((360 / angle_step) + 1);
-	//this->vertex = new GLfloat[vertex_size];
-
-	//Total_Points
-	this->vertex_size = step_circle * step_height * 3;
-
-	this->indexes_size = 6 * step_circle * (step_height - 1);
+	//Size of vertex and index vectors
+	this->vertex_size = h_sections * v_sections * 3;
+	this->index_size = 6 * h_sections * (v_sections - 1);
 
 	this->vertex = new GLfloat[vertex_size];
-	this->indexes = new int[indexes_size];
+	this->vertex_index = new GLuint[index_size];
 
+	vertex_id = 0;
+	vertex_index_id = 0;
 }
 
 SkyDome::~SkyDome() {
-	// TODO Auto-generated destructor stub
+
 }
 
 void SkyDome::show() {
 
-	// TODO Usar VBO parar armazenar e desenhar os vértices
-
 	std::cout << "Drawing SkyDome\n";
-
-	GLfloat v_x = 0.0;
-	GLfloat v_y = 0.0;
-	GLfloat v_z = 0.0;
 
 	makePoints();
 	makeIndexes();
 	makeVBO();
 
+#if DEBUG_GLEW
 	std::cout << glewGetErrorString(glGetError()) << std::endl;
+#endif
 
-	if (DEBUG_POINTS) {
-		for (int i = 0; i < vertex_size; i += 3) {
-			std::cout << "(x, y, z) => (" << vertex[i] << ", " << vertex[i + 1]
-					<< ", " << vertex[i + 2] << ")\n";
-		}
-
-		std::cout << "Number of Vertex: " << vertex_size / 3 << std::endl;
-
+#if DEBUG_POINTS
+	for (int i = 0; i < vertex_size; i += 3) {
+		std::cout << "(x, y, z) => (" << vertex[i] << ", " << vertex[i + 1]
+		<< ", " << vertex[i + 2] << ")\n";
 	}
 
-	if (DEBUG_INDEX) {
+	std::cout << "Number of Vertex: " << vertex_size / 3 << std::endl;
+#endif
 
-		for (int i = 0; i < indexes_size; i += 3) {
-			std::cout << "Triangle => (" << indexes[i] << ", " << indexes[i + 1]
-					<< ", " << indexes[i + 2] << ")\n";
-		}
+#if DEBUG_INDEX
 
-		std::cout << "Number of Index: " << indexes_size << std::endl;
+	for (int i = 0; i < index_size; i += 3) {
+		std::cout << "Triangle => (" << vertex_index[i] << ", "
+		<< vertex_index[i + 1] << ", " << vertex_index[i + 2]
+		<< ")\n";
 	}
+
+	std::cout << "Number of Index: " << index_size << std::endl;
+
+#endif
 
 	update(0);
 }
@@ -84,29 +79,27 @@ void SkyDome::makeIndexes() {
 
 	int position = 0;
 
-	for (int i = 1; i <= step_height; ++i) {
+	for (int i = 1; i <= v_sections; ++i) {
 
-		int first_circle_point = (i - 1) * step_circle;
+		int first_circle_point = (i - 1) * h_sections;
 		int actual_circle_point = first_circle_point;
 
-		for (int j = 0; j < step_circle; ++j) {
+		for (int j = 0; j < h_sections; ++j) {
 
-			int last = actual_circle_point + step_circle;
+			int last = actual_circle_point + h_sections;
 
-			indexes[position] = actual_circle_point;
+			vertex_index[position] = actual_circle_point;
 
 			actual_circle_point = (actual_circle_point + 1)
-					% (actual_circle_point + step_circle);
+					% (actual_circle_point + h_sections);
 
-			indexes[position + 1] = actual_circle_point;
-			//indexes[position + 3] = actual_circle_point;
-			indexes[position + 3] = last;
+			vertex_index[position + 1] = actual_circle_point;
+			vertex_index[position + 3] = last;
 
-			indexes[position + 2] = last;
-			//indexes[position + 4] = last;
-			indexes[position + 4] = actual_circle_point;
+			vertex_index[position + 2] = last;
+			vertex_index[position + 4] = actual_circle_point;
 
-			indexes[position + 5] = last + 1;
+			vertex_index[position + 5] = last + 1;
 
 			position += 6;
 		}
@@ -115,23 +108,14 @@ void SkyDome::makeIndexes() {
 
 void SkyDome::update(float time) {
 
-	// Set values here
+	glPolygonMode( GL_BACK, GL_FILL);
 
-	//glColor3f(0.0, 0.0, 0.0);
-	//glPolygonMode( GL_BACK, GL_LINE);
-	glPolygonMode( GL_FRONT_AND_BACK, GL_FILL);
-
-	glBindBuffer(GL_ARRAY_BUFFER, vertex_id);	//use this VBO
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexes_id);	//and index
-	glEnableClientState(GL_VERTEX_ARRAY);	//we use vertex and
-	//the vertex has 3 component (x,y,z),it has the type float, 3 float is the vertex + 3 float is the color/6*sizeof(float), and the first
-	//coordinate start at the begginning of the VBO
+	glBindBuffer(GL_ARRAY_BUFFER, vertex_id);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vertex_index_id);
+	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3, GL_FLOAT, 3 * sizeof(GLfloat), 0);
-	//same thing
 
-	// SEGUNDO PARÂMETRO: QUANTIDADE DE ELEMENTOS A SEREM DESENHADOS
-
-	glDrawElements(GL_TRIANGLES, indexes_size - 1,
+	glDrawElements(GL_TRIANGLES, index_size - 1,
 	GL_UNSIGNED_INT, (void *) 0);
 
 	glDisableClientState(GL_VERTEX_ARRAY);
@@ -142,32 +126,31 @@ void SkyDome::update(float time) {
 void SkyDome::makeVBO() {
 
 	glGenBuffers(1, &vertex_id);
-	glGenBuffers(1, &indexes_id);
+	glGenBuffers(1, &vertex_index_id);
 	glBindBuffer(GL_ARRAY_BUFFER, vertex_id);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexes_id);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vertex_index_id);
 
 	glBufferData(GL_ARRAY_BUFFER, vertex_size * sizeof(GLfloat), vertex,
 	GL_STATIC_DRAW);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexes_size * sizeof(int), indexes,
-	GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, index_size * sizeof(int),
+			vertex_index,
+			GL_STATIC_DRAW);
+
+	delete[] vertex;
+	delete[] vertex_index;
 }
 
 void SkyDome::makePoints() {
 
 	int counter = 0;
 
-	float x_angle;
-	float y_angle;
-
-	unsigned int mean = (unsigned int) vertex_size * 0.5;
-
-	for (int i = step_height; i > 0; --i) {
+	for (int i = v_sections; i > 0; --i) {
 
 		GLfloat height_angle = 90 - i * step_height_angle;
 
 		GLfloat height_angle_rad = height_angle * to_rad;
 
-		for (int j = 0; j < step_circle; ++j) {
+		for (int j = 0; j < h_sections; ++j) {
 			GLfloat circle_angle = j * step_circle_angle;
 
 			GLfloat circle_angle_rad = circle_angle * to_rad;
