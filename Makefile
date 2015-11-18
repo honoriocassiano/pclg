@@ -9,7 +9,8 @@ OBJS += \
 ./bin/shader/ShaderManager.o \
 ./bin/noise/Perlin.o \
 ./bin/sky/Surface.o \
-./bin/sky/SkyDome.o
+./bin/sky/SkyDome.o \
+./bin/camera/Camera.o
 
 
 USER_OBJS += \
@@ -18,7 +19,8 @@ USER_OBJS += \
 ./src/shader/ShaderManager.cpp \
 ./src/noise/Perlin.cpp \
 ./src/sky/Surface.cpp \
-./src/sky/SkyDome.cpp
+./src/sky/SkyDome.cpp \
+./src/camera/Camera.cpp
 
 ./bin/%.o: ./src/%.cpp
 	@mkdir -p $(@D)
