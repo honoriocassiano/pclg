@@ -117,9 +117,9 @@ void SkyDome::update(float time) {
 
 	// Set values here
 
-	//glColor3f(0.0, 0.0, 0.0);
+	glColor3f(0.0, 0.0, 0.0);
 	//glPolygonMode( GL_BACK, GL_LINE);
-	glPolygonMode( GL_FRONT_AND_BACK, GL_FILL);
+	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vertex_id);	//use this VBO
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexes_id);	//and index

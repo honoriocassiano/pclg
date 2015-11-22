@@ -11,7 +11,7 @@
 #include "sky/SkyDome.h"
 #include "camera/Camera.h"
 
-#define USE_PERLIN 1
+#define USE_PERLIN 0
 #define DEBUG_CAMERA 0
 
 noise::Perlin * perlin_noise;
