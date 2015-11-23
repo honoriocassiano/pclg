@@ -136,8 +136,6 @@ void SkyDome::makeVBO() {
 			vertex_index,
 			GL_STATIC_DRAW);
 
-	delete[] vertex;
-	delete[] vertex_index;
 }
 
 void SkyDome::makePoints() {
