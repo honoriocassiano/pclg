@@ -183,20 +183,12 @@ void specialKeyFuncton(int key, int x, int y) {
 
 	switch (key) {
 		case GLUT_KEY_UP:
-			delta_vertical_angle = -2;
-			camera_is_changed = true;
 			break;
 		case GLUT_KEY_DOWN:
-			delta_vertical_angle = 2;
-			camera_is_changed = true;
 			break;
 		case GLUT_KEY_LEFT:
-			delta_horizontal_angle = -2;
-			camera_is_changed = true;
 			break;
 		case GLUT_KEY_RIGHT:
-			delta_horizontal_angle = 2;
-			camera_is_changed = true;
 			break;
 	}
 }
