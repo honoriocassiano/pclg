@@ -35,8 +35,8 @@ void Camera::rotate(GLfloat delta_horizontal_angle, GLfloat delta_vertical_angle
 	horizontal_angle += delta_horizontal_angle;
 	vertical_angle += delta_vertical_angle;
 
-	GLfloat horizontal_rad = horizontal_angle * TO_RAD;
-	GLfloat vertical_rad = vertical_angle * TO_RAD;
+	GLfloat horizontal_rad = fmod(horizontal_angle * TO_RAD, 360.0);
+	GLfloat vertical_rad = fmod(vertical_angle * TO_RAD, 180.0);
 
 	look_to_x = (sin(vertical_rad) * cos(horizontal_rad) * 5) + x;
 	look_to_y = (cos(vertical_rad) * 5) + y;
