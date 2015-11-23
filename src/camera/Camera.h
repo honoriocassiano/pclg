@@ -14,8 +14,6 @@
 
 static const float TO_RAD = M_PI / 180.0;
 
-//namespace camera {
-
 class Camera {
 public:
 	Camera(GLfloat x_position, GLfloat y_position, GLfloat z_position,
@@ -32,14 +30,12 @@ private:
 	GLfloat y;
 	GLfloat z;
 
-	GLfloat look_to_x;
-	GLfloat look_to_y;
-	GLfloat look_to_z;
+	GLfloat look_vector_x;
+	GLfloat look_vector_y;
+	GLfloat look_vector_z;
 
 	GLfloat horizontal_angle;
 	GLfloat vertical_angle;
 };
-
-//} /* namespace camera */
 
 #endif /* CAMERA_CAMERA_H_ */
