@@ -20,19 +20,13 @@ Camera * camera;
 
 bool camera_is_changed = false;
 
-//static const float TO_RAD = M_PI / 180.0;
-
-float delta = 0.0;
-float theta = 0.0;
-float camera_ray = 6;
-
 GLfloat delta_vertical_angle = 0;
 GLfloat delta_horizontal_angle = 0;
 
-float prev_deltha = -1.0;
-float prev_theta = -1.0;
+bool mouse_left_click = false;
 
-float x, y, z;
+GLfloat prev_mouse_x = 0.0;
+GLfloat prev_mouse_y = 0.0;
 
 GLint loc_time;
 GLint loc_octaves;
@@ -72,7 +66,7 @@ void renderScene(void) {
 	//gluLookAt(x, y, z, 0.0, 0.0, 0.0, 0.0f, 1.0f, 0.0f);
 	//gluLookAt(x, y, z, 0.0, 0.0, 0.0, 0.0f, 1.0f, 0.0f);
 
-	if (camera_is_changed) {
+	if (camera_is_changed || mouse_left_click) {
 		camera_is_changed = false;
 		camera->rotate(delta_horizontal_angle, delta_vertical_angle);
 		delta_horizontal_angle = 0.0;
@@ -120,8 +114,32 @@ int printOglError(char *file, int line) {
 	return retCode;
 }
 
-void mouseMoveEvent(int x, int y) {
+void mouseClickEvent(int button, int state, int x, int y) {
 
+	// only start motion if the left button is pressed
+	if (button == GLUT_LEFT_BUTTON) {
+
+		// when the button is released
+		if (state == GLUT_UP) {
+			mouse_left_click = false;
+			std::cout << "lmb up   " << "x: " << x << "; y: " << y << ";\n";
+		}
+		else  {// state = GLUT_DOWN
+			mouse_left_click = true;
+			prev_mouse_x = x;
+			prev_mouse_y = y;
+			std::cout << "lmb down " << "x: " << x << "; y: " << y << ";\n";
+		}
+	}
+}
+
+void mouseMoveEvent(int x, int y) {
+	if (mouse_left_click) {
+		delta_horizontal_angle = (prev_mouse_x - x) * 320 / 360;
+		prev_mouse_x = x;
+		delta_vertical_angle = (prev_mouse_y - y)* 320 / 360;
+		prev_mouse_y = y;
+	}
 }
 
 /*
@@ -197,7 +215,7 @@ int main(int argc, char **argv) {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(100, 100);
-	glutInitWindowSize(320, 320);
+	glutInitWindowSize(500, 500);
 	glutCreateWindow("Procedural Cloud Generator");
 
 	perlin_noise = new noise::Perlin(20);
@@ -209,6 +227,11 @@ int main(int argc, char **argv) {
 	glutReshapeFunc(changeSize);
 	glutKeyboardFunc(processNormalKeys);
 	glutSpecialFunc(specialKeyFuncton);
+
+	glutMouseFunc(mouseClickEvent);
+	glutMotionFunc(mouseMoveEvent);
+
+	glutSetCursor(GLUT_CURSOR_NONE);
 
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(1.0, 1.0, 1.0, 1.0);
