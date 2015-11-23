@@ -18,12 +18,11 @@ noise::Perlin * perlin_noise;
 sky::SkyDome * skyDome;
 Camera * camera;
 
-bool camera_is_changed = false;
-
-GLfloat delta_vertical_angle = 0;
-GLfloat delta_horizontal_angle = 0;
-
+bool camera_update_pending = false;
 bool mouse_left_click = false;
+
+GLfloat delta_vertical_angle = 0.0;
+GLfloat delta_horizontal_angle = 0.0;
 
 GLfloat prev_mouse_x = 0.0;
 GLfloat prev_mouse_y = 0.0;
@@ -63,12 +62,12 @@ void renderScene(void) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glLoadIdentity();
-	//gluLookAt(x, y, z, 0.0, 0.0, 0.0, 0.0f, 1.0f, 0.0f);
-	//gluLookAt(x, y, z, 0.0, 0.0, 0.0, 0.0f, 1.0f, 0.0f);
 
-	if (camera_is_changed || mouse_left_click) {
-		camera_is_changed = false;
+	if (camera_update_pending) {
+		camera_update_pending = false;
+
 		camera->rotate(delta_horizontal_angle, delta_vertical_angle);
+
 		delta_horizontal_angle = 0.0;
 		delta_vertical_angle = 0.0;
 	}
@@ -115,20 +114,15 @@ int printOglError(char *file, int line) {
 }
 
 void mouseClickEvent(int button, int state, int x, int y) {
-
-	// only start motion if the left button is pressed
 	if (button == GLUT_LEFT_BUTTON) {
-
-		// when the button is released
-		if (state == GLUT_UP) {
-			mouse_left_click = false;
-			std::cout << "lmb up   " << "x: " << x << "; y: " << y << ";\n";
-		}
-		else  {// state = GLUT_DOWN
+		if (state == GLUT_DOWN) {
 			mouse_left_click = true;
+
 			prev_mouse_x = x;
 			prev_mouse_y = y;
-			std::cout << "lmb down " << "x: " << x << "; y: " << y << ";\n";
+		}
+		else  {
+			mouse_left_click = false;
 		}
 	}
 }
@@ -136,16 +130,14 @@ void mouseClickEvent(int button, int state, int x, int y) {
 void mouseMoveEvent(int x, int y) {
 	if (mouse_left_click) {
 		delta_horizontal_angle = (prev_mouse_x - x) * 320 / 360;
+		delta_vertical_angle = (prev_mouse_y - y) * 320 / 360;
+
 		prev_mouse_x = x;
-		delta_vertical_angle = (prev_mouse_y - y)* 320 / 360;
 		prev_mouse_y = y;
+
+		camera_update_pending = true;
 	}
 }
-
-/*
- void glutMouseFunc(void (*func)(int button, int state,
- int x, int y));
- */
 
 void printShaderInfoLog(GLuint obj) {
 	int infologLength = 0;
