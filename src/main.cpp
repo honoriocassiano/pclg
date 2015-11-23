@@ -24,6 +24,9 @@ bool mouse_left_click = false;
 GLfloat delta_vertical_angle = 0.0;
 GLfloat delta_horizontal_angle = 0.0;
 
+GLfloat delta_front_back = 0.0;
+GLfloat delta_left_right = 0.0;
+
 GLfloat prev_mouse_x = 0.0;
 GLfloat prev_mouse_y = 0.0;
 
@@ -67,9 +70,12 @@ void renderScene(void) {
 		camera_update_pending = false;
 
 		camera->rotate(delta_horizontal_angle, delta_vertical_angle);
+		camera->move(delta_front_back, delta_left_right);
 
 		delta_horizontal_angle = 0.0;
 		delta_vertical_angle = 0.0;
+		delta_front_back = 0.0;
+		delta_left_right = 0.0;
 	}
 
 	camera->update(elapsed_time);
@@ -175,12 +181,20 @@ void specialKeyFuncton(int key, int x, int y) {
 
 	switch (key) {
 		case GLUT_KEY_UP:
+			delta_front_back = 1;
+			camera_update_pending = true;
 			break;
 		case GLUT_KEY_DOWN:
+			delta_front_back = -1;
+			camera_update_pending = true;
 			break;
 		case GLUT_KEY_LEFT:
+			delta_left_right = 1;
+			camera_update_pending = true;
 			break;
 		case GLUT_KEY_RIGHT:
+			delta_left_right = -1;
+			camera_update_pending = true;
 			break;
 	}
 }

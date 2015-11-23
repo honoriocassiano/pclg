@@ -8,6 +8,7 @@
 #include <math.h>
 #include <GL/gl.h>
 #include <GL/glut.h>
+#include <glm/glm.hpp>
 
 #ifndef CAMERA_CAMERA_H_
 #define CAMERA_CAMERA_H_
