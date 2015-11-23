@@ -6,46 +6,50 @@
  */
 
 #include "Camera.h"
+#include <iostream> // TODO remove
 
 //namespace camera {
 
-Camera::Camera(GLfloat x_position, GLfloat y_position, GLfloat z_position) {
+Camera::Camera(GLfloat x_position, GLfloat y_position, GLfloat z_position,
+		GLfloat horizontal_angle, GLfloat vertical_angle) {
 	this->x = x_position;
 	this->y = y_position;
 	this->z = z_position;
 
-	this->r_x = 0.0;
-	this->r_y = 0.0;
-	this->r_z = 0.0;
+	this->look_to_x = 0.0;
+	this->look_to_y = 0.0;
+	this->look_to_z = 0.0;
 
-	horizontal_angle = 0.0;
-	vertical_angle = 0.0;
+	this->horizontal_angle = horizontal_angle;
+	this->vertical_angle = vertical_angle;
 }
 
 Camera::~Camera() {
 }
 
-void Camera::move(GLfloat delta_front_back, GLfloat delta_left_right) {
-	/*
-	x = new_x;
-	y = new_y;
-	z = new_z;
-	*/
+void Camera::move(GLfloat delta_up_down, GLfloat delta_left_right) {
 
-	x += delta_front_back * sin(horizontal_angle);
-	z += delta_front_back * (-cos(horizontal_angle));
 }
 
 void Camera::rotate(GLfloat delta_horizontal_angle, GLfloat delta_vertical_angle) {
-	/*
-	r_x = new_x;
-	r_y = new_y;
-	r_z = new_z;
-	*/
+	horizontal_angle += delta_horizontal_angle;
+	vertical_angle += delta_vertical_angle;
+
+	GLfloat horizontal_rad = horizontal_angle * TO_RAD;
+	GLfloat vertical_rad = vertical_angle * TO_RAD;
+
+	look_to_x = (sin(vertical_rad) * cos(horizontal_rad) * 5) + x;
+	look_to_y = (cos(vertical_rad) * 5) + y;
+	look_to_z = (sin(vertical_rad) * sin(horizontal_rad) * 5) + z;
+
+	std::cout << "hangle: " << horizontal_angle << "\n";
+	std::cout << "vangle: " << vertical_angle << "\n";
+	std::cout << "cam_pos: (" << x << ", " << y << ", " << z << ")\n";
+	std::cout << "look_to: (" << look_to_x << ", " << look_to_y << ", " << look_to_z << ")\n\n";
 }
 
 void Camera::update(float time) {
-	gluLookAt(x, y, z, r_x, r_y, r_z, 0.0f, 1.0f, 0.0f);
+	gluLookAt(x, y, z, look_to_x, look_to_y, look_to_z, 0.0f, 1.0f, 0.0f);
 }
 
 //} /* namespace camera */

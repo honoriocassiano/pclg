@@ -20,14 +20,14 @@ Camera * camera;
 
 bool camera_is_changed = false;
 
-static const float TO_RAD = M_PI / 180.0;
+//static const float TO_RAD = M_PI / 180.0;
 
 float delta = 0.0;
 float theta = 0.0;
 float camera_ray = 6;
 
-GLfloat delta_front_back = 0;
-GLfloat delta_left_right = 0;
+GLfloat delta_vertical_angle = 0;
+GLfloat delta_horizontal_angle = 0;
 
 float prev_deltha = -1.0;
 float prev_theta = -1.0;
@@ -66,29 +66,6 @@ void changeSize(int w, int h) {
 float elapsed_time = 1;
 
 void renderScene(void) {
-
-	if (prev_deltha != delta || prev_theta != theta) {
-		float theta_rad = theta * TO_RAD;
-		float deltha_rad = delta * TO_RAD * -1;
-
-		float cos_x_angle = cos(theta_rad);
-		float cos_y_angle = cos(deltha_rad);
-
-		float sin_x_angle = sin(theta_rad);
-		float sin_y_angle = sin(deltha_rad);
-
-		x = camera_ray * sin_x_angle * sin_y_angle;
-		y = camera_ray * cos_x_angle;
-		z = camera_ray * sin_x_angle * cos_y_angle;
-
-		if (DEBUG_CAMERA) {
-			std::cout << "(x, y, z) => (" << x << ", " << y << ", " << z
-					<< ")\n";
-		}
-
-		prev_deltha = delta;
-		prev_theta = theta;
-	}
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glLoadIdentity();
@@ -97,7 +74,9 @@ void renderScene(void) {
 
 	if (camera_is_changed) {
 		camera_is_changed = false;
-		camera->move(delta_front_back, delta_left_right);
+		camera->rotate(delta_horizontal_angle, delta_vertical_angle);
+		delta_horizontal_angle = 0.0;
+		delta_vertical_angle = 0.0;
 	}
 
 	camera->update(elapsed_time);
@@ -186,21 +165,19 @@ void specialKeyFuncton(int key, int x, int y) {
 
 	switch (key) {
 		case GLUT_KEY_UP:
-			theta += 1.0;
-			delta_front_back = 1;
+			delta_vertical_angle = -2;
 			camera_is_changed = true;
 			break;
 		case GLUT_KEY_DOWN:
-			theta -= 1.0;
-			delta_front_back = -1;
+			delta_vertical_angle = 2;
 			camera_is_changed = true;
 			break;
 		case GLUT_KEY_LEFT:
-			delta += 1.0;
+			delta_horizontal_angle = -2;
 			camera_is_changed = true;
 			break;
 		case GLUT_KEY_RIGHT:
-			delta -= 1.0;
+			delta_horizontal_angle = 2;
 			camera_is_changed = true;
 			break;
 	}
@@ -225,7 +202,7 @@ int main(int argc, char **argv) {
 
 	perlin_noise = new noise::Perlin(20);
 	skyDome = new sky::SkyDome(1.5, 10);
-	camera = new Camera(0, 0, -5);
+	camera = new Camera(0, 0, -5, 90, 90);
 
 	glutDisplayFunc(renderScene);
 	glutIdleFunc(renderScene);

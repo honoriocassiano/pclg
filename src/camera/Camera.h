@@ -12,11 +12,14 @@
 #ifndef CAMERA_CAMERA_H_
 #define CAMERA_CAMERA_H_
 
+static const float TO_RAD = M_PI / 180.0;
+
 //namespace camera {
 
 class Camera {
 public:
-	Camera(GLfloat x_position, GLfloat y_position, GLfloat z_position);
+	Camera(GLfloat x_position, GLfloat y_position, GLfloat z_position,
+			GLfloat horizontal_angle, GLfloat vertical_angle);
 	virtual ~Camera();
 
 	void move(GLfloat delta_front_back, GLfloat delta_left_right);
@@ -29,9 +32,9 @@ private:
 	GLfloat y;
 	GLfloat z;
 
-	GLfloat r_x;
-	GLfloat r_y;
-	GLfloat r_z;
+	GLfloat look_to_x;
+	GLfloat look_to_y;
+	GLfloat look_to_z;
 
 	GLfloat horizontal_angle;
 	GLfloat vertical_angle;
