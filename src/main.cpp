@@ -11,7 +11,7 @@
 #include "sky/SkyDome.h"
 #include "camera/Camera.h"
 
-#define USE_PERLIN 0
+#define USE_PERLIN 1
 #define DEBUG_CAMERA 0
 
 noise::Perlin * perlin_noise;
@@ -23,7 +23,6 @@ bool mouse_left_click = false;
 
 GLfloat delta_vertical_angle = 0.0;
 GLfloat delta_horizontal_angle = 0.0;
-
 GLfloat delta_front_back = 0.0;
 GLfloat delta_left_right = 0.0;
 
@@ -67,8 +66,6 @@ void renderScene(void) {
 	glLoadIdentity();
 
 	if (camera_update_pending) {
-		camera_update_pending = false;
-
 		camera->rotate(delta_horizontal_angle, delta_vertical_angle);
 		camera->move(delta_front_back, delta_left_right);
 
@@ -76,6 +73,8 @@ void renderScene(void) {
 		delta_vertical_angle = 0.0;
 		delta_front_back = 0.0;
 		delta_left_right = 0.0;
+
+		camera_update_pending = false;
 	}
 
 	camera->update(elapsed_time);
@@ -92,31 +91,6 @@ void renderScene(void) {
 	}
 
 	glutSwapBuffers();
-}
-
-void processNormalKeys(unsigned char key, int x, int y) {
-
-	switch (key) {
-		case 27:
-			exit(0);
-			break;
-		case 'w':
-			delta_front_back = 1;
-			camera_update_pending = true;
-			break;
-		case 's':
-			delta_front_back = -1;
-			camera_update_pending = true;
-			break;
-		case 'a':
-			delta_left_right = 1;
-			camera_update_pending = true;
-			break;
-		case 'd':
-			delta_left_right = -1;
-			camera_update_pending = true;
-			break;
-	}
 }
 
 #define printOpenGLError() printOglError(__FILE__, __LINE__)
@@ -154,8 +128,8 @@ void mouseClickEvent(int button, int state, int x, int y) {
 
 void mouseMoveEvent(int x, int y) {
 	if (mouse_left_click) {
-		delta_horizontal_angle = (prev_mouse_x - x) * 320 / 360;
-		delta_vertical_angle = (prev_mouse_y - y) * 320 / 360;
+		delta_horizontal_angle = (prev_mouse_x - x) * 360 / 320;
+		delta_vertical_angle = (prev_mouse_y - y) * 360 / 320;
 
 		prev_mouse_x = x;
 		prev_mouse_y = y;
@@ -193,6 +167,31 @@ void printProgramInfoLog(GLuint obj) {
 		std::cout << infoLog;
 
 		free(infoLog);
+	}
+}
+
+void processNormalKeys(unsigned char key, int x, int y) {
+
+	switch (key) {
+		case 27:
+			exit(0);
+			break;
+		case 'w':
+			delta_front_back = 1;
+			camera_update_pending = true;
+			break;
+		case 's':
+			delta_front_back = -1;
+			camera_update_pending = true;
+			break;
+		case 'a':
+			delta_left_right = 1;
+			camera_update_pending = true;
+			break;
+		case 'd':
+			delta_left_right = -1;
+			camera_update_pending = true;
+			break;
 	}
 }
 
