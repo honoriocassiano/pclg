@@ -96,8 +96,27 @@ void renderScene(void) {
 
 void processNormalKeys(unsigned char key, int x, int y) {
 
-	if (key == 27)
-		exit(0);
+	switch (key) {
+		case 27:
+			exit(0);
+			break;
+		case 'w':
+			delta_front_back = 1;
+			camera_update_pending = true;
+			break;
+		case 's':
+			delta_front_back = -1;
+			camera_update_pending = true;
+			break;
+		case 'a':
+			delta_left_right = 1;
+			camera_update_pending = true;
+			break;
+		case 'd':
+			delta_left_right = -1;
+			camera_update_pending = true;
+			break;
+	}
 }
 
 #define printOpenGLError() printOglError(__FILE__, __LINE__)
