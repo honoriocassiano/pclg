@@ -83,21 +83,20 @@ void ShaderManager::setProgramState(const GLint program, bool state) {
 #if DEBUG_SHADER
 
 void ShaderManager::printShaderInfoLog(std::string name, GLuint object) {
-		int infologLength = 0;
-		int charsWritten = 0;
-		char *infoLog;
+	int infologLength = 0;
+	int charsWritten = 0;
+	char *infoLog;
 
-		glGetShaderiv(object, GL_INFO_LOG_LENGTH, &infologLength);
+	glGetShaderiv(object, GL_INFO_LOG_LENGTH, &infologLength);
 
-		if (infologLength > 0) {
-			infoLog = (char *) malloc(infologLength);
-			glGetShaderInfoLog(object, infologLength, &charsWritten, infoLog);
-			std::cout << "Shader " << name << " log:\n\t" << infoLog;
+	if (infologLength > 0) {
+		infoLog = (char *) malloc(infologLength);
+		glGetShaderInfoLog(object, infologLength, &charsWritten, infoLog);
+		std::cout << "Shader " << name << " log:\n\t" << infoLog;
 
-			free(infoLog);
-		}
+		free(infoLog);
 	}
-
+}
 
 void ShaderManager::printProgramInfoLog(GLuint obj) {
 	int infologLength = 0;

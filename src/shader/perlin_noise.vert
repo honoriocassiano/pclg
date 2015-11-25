@@ -13,9 +13,11 @@ void main()
 
 uniform float time;
 uniform int octaves;
+
 //attribute float apply;
  
 void main() {
+
 	gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
 /*
 	 if(gl_Vertex.x >= 0 || gl_Vertex.y >= 0) {

@@ -12,7 +12,6 @@
 #include "camera/Camera.h"
 
 #define USE_PERLIN 1
-#define DEBUG_CAMERA 0
 
 noise::Perlin * perlin_noise;
 sky::SkyDome * skyDome;
@@ -203,8 +202,8 @@ int main(int argc, char **argv) {
 	glutCreateWindow("Procedural Cloud Generator");
 
 	perlin_noise = new noise::Perlin(20);
-	skyDome = new sky::SkyDome(1.5, 30, 10);
-	camera = new Camera(0, 0, 0, 90, 90);
+	skyDome = new sky::SkyDome(1.5, 30, 20);
+	camera = new Camera(0, 0, 0, 0, 180);
 
 	glutDisplayFunc(renderScene);
 	glutIdleFunc(renderScene);

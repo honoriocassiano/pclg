@@ -9,13 +9,24 @@
 #include <iostream> // TODO remove
 
 Camera::Camera(GLfloat x_position, GLfloat y_position, GLfloat z_position,
-		GLfloat horizontal_angle, GLfloat vertical_angle) :
-		x(x_position), y(y_position), z(z_position), horizontal_angle(0.0f),
-		vertical_angle(0.0f), look_vector_x(0.0f), look_vector_y(0.0f), look_vector_z(0.0f) {
+		GLfloat horizontal_angle, GLfloat vertical_angle) {
+
+	x = x_position;
+	y = y_position;
+	z = z_position;
+
+	this->horizontal_angle = horizontal_angle;
+	this->vertical_angle = vertical_angle;
+
+	look_vector_x = 0.0f;
+	look_vector_y = 0.0f;
+	look_vector_z = 0.0f;
+
 	rotate(horizontal_angle, vertical_angle);
 }
 
-Camera::~Camera() {}
+Camera::~Camera() {
+}
 
 void Camera::move(GLfloat delta_front_back, GLfloat delta_left_right) {
 	glm::vec3 up(0.0f, 1.0f, 0.0f);
@@ -29,7 +40,8 @@ void Camera::move(GLfloat delta_front_back, GLfloat delta_left_right) {
 	z += (look_vector_z * 0.10) * delta_front_back;
 }
 
-void Camera::rotate(GLfloat delta_horizontal_angle, GLfloat delta_vertical_angle) {
+void Camera::rotate(GLfloat delta_horizontal_angle,
+		GLfloat delta_vertical_angle) {
 	horizontal_angle += delta_horizontal_angle;
 	vertical_angle += delta_vertical_angle;
 
@@ -39,13 +51,17 @@ void Camera::rotate(GLfloat delta_horizontal_angle, GLfloat delta_vertical_angle
 	look_vector_x = sin(vertical_rad) * cos(horizontal_rad);
 	look_vector_y = cos(vertical_rad);
 	look_vector_z = sin(vertical_rad) * sin(horizontal_rad);
-
-//	std::cout << "hangle: " << horizontal_angle << "\n";
-//	std::cout << "vangle: " << vertical_angle << "\n";
-//	std::cout << "cam_pos: (" << x << ", " << y << ", " << z << ")\n";
-//	std::cout << "look_to: (" << look_vector_x << ", " << look_vector_y << ", " << look_vector_z << ")\n\n";
 }
 
 void Camera::update(float time) {
-	gluLookAt(x, y, z, look_vector_x + x, look_vector_y + y, look_vector_z + z, 0.0f, 1.0f, 0.0f);
+	gluLookAt(x, y, z, look_vector_x + x, look_vector_y + y, look_vector_z + z,
+			0.0f, 1.0f, 0.0f);
+
+#if DEBUG_CAMERA
+	std::cout << "hangle: " << horizontal_angle << "\n";
+	std::cout << "vangle: " << vertical_angle << "\n";
+	std::cout << "cam_pos: (" << x << ", " << y << ", " << z << ")\n";
+	std::cout << "look_to: (" << look_vector_x << ", " << look_vector_y << ", "
+			<< look_vector_z << ")\n\n";
+#endif
 }

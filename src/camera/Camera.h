@@ -10,6 +10,8 @@
 #include <GL/glut.h>
 #include <glm/glm.hpp>
 
+#define DEBUG_CAMERA 0
+
 #ifndef CAMERA_CAMERA_H_
 #define CAMERA_CAMERA_H_
 

@@ -168,19 +168,21 @@ float pnoise(vec3 P, vec3 rep)
 
 void main() {
 
-	float n = cnoise((gl_FragCoord.xyz + 50.0 * vec3(time, time, time) ) / 70.0);
 
-    float cutoff = 0.01;
+  int i = 0;
+  float n = 0.0;
 
-    if(n < cutoff) {
-        n = 0.0;
-    } else {
-        n -= cutoff;
-    }
+  for(i = 0; i < 5; i++) {
+    n += cnoise(  (pow(2.0, i) * (gl_FragCoord.xyz + 50.0 * vec3(time, time, time) )) / ((float(i) + 1.0) * 40.0) );
+  }
 
-    //gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0) * n + vec4(0.0, 0.6, 1.0, 1.0);
-    gl_FragColor = (vec4(1.0, 1.0, 1.0, 1.0) - vec4(0.0, 0.6, 1.0, 1.0)) * n + vec4(0.0, 0.6, 1.0, 1.0);
-    //gl_FragColor = vec4(0.0, 153.0, 255.0, 0.0);
-    //gl_FragColor.xyz = vec3(n, n, n);
-    //gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0)  vec4(0.0, 153.0, 255.0, 1.0);
+  float cutoff = 0.5;
+
+  if(n < cutoff) {
+      n = 0.0;
+  } else {
+      n -= cutoff;
+  }
+
+  gl_FragColor = (vec4(1.0, 1.0, 1.0, 1.0) - vec4(0.0, 0.6, 1.0, 1.0)) * n + vec4(0.0, 0.6, 1.0, 1.0);
 }
