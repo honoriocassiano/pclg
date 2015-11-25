@@ -27,4 +27,4 @@
 *.out
 *.app
 /Debug/*
-bin/main
+pclg

@@ -27,7 +27,7 @@ USER_OBJS += \
 	$(CXX) $(FLAGS) $(C_FLAGS) -o "$@" "$<"
 
 Main: $(OBJS) $(USER_OBJS)
-	$(CXX) $(FLAGS) -o ./bin/main $(OBJS) $(LIBS)
+	$(CXX) $(FLAGS) -o ./pclg $(OBJS) $(LIBS)
 	
 all: Main
 	

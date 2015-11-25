@@ -40,10 +40,10 @@ void Camera::rotate(GLfloat delta_horizontal_angle, GLfloat delta_vertical_angle
 	look_vector_y = cos(vertical_rad);
 	look_vector_z = sin(vertical_rad) * sin(horizontal_rad);
 
-	std::cout << "hangle: " << horizontal_angle << "\n";
-	std::cout << "vangle: " << vertical_angle << "\n";
-	std::cout << "cam_pos: (" << x << ", " << y << ", " << z << ")\n";
-	std::cout << "look_to: (" << look_vector_x << ", " << look_vector_y << ", " << look_vector_z << ")\n\n";
+//	std::cout << "hangle: " << horizontal_angle << "\n";
+//	std::cout << "vangle: " << vertical_angle << "\n";
+//	std::cout << "cam_pos: (" << x << ", " << y << ", " << z << ")\n";
+//	std::cout << "look_to: (" << look_vector_x << ", " << look_vector_y << ", " << look_vector_z << ")\n\n";
 }
 
 void Camera::update(float time) {
