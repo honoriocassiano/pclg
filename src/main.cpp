@@ -237,7 +237,7 @@ int main(int argc, char **argv) {
 	glutCreateWindow("Procedural Cloud Generator");
 
 	perlin_noise = new noise::Perlin(20);
-	skyDome = new sky::SkyDome(1.5, 10);
+	skyDome = new sky::SkyDome(1.5, 10, 5);
 	camera = new Camera(0, 0, -5, 90, 90);
 
 	glutDisplayFunc(renderScene);
