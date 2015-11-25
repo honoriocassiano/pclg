@@ -61,7 +61,6 @@ void changeSize(int w, int h) {
 float elapsed_time = 1;
 
 void renderScene(void) {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glLoadIdentity();
 
@@ -76,6 +75,7 @@ void renderScene(void) {
 
 		camera_update_pending = false;
 	}
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	camera->update(elapsed_time);
 
@@ -92,6 +92,8 @@ void renderScene(void) {
 
 	glutSwapBuffers();
 }
+
+
 
 #define printOpenGLError() printOglError(__FILE__, __LINE__)
 

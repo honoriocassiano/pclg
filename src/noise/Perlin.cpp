@@ -33,7 +33,7 @@ void Perlin::update(float time, bool update_surfaces) {
 	shader::ShaderManager::setUniformFloatValue(time_location, time);
 
 	if (update_surfaces) {
-		for (int i = 0; i < surfaces.size(); ++i) {
+		for (uint i = 0; i < surfaces.size(); ++i) {
 			surfaces[i]->update(time);
 		}
 	}
@@ -55,7 +55,7 @@ void Perlin::show(bool show_surfaces) {
 	shader::ShaderManager::setProgramState(program, true);
 
 	if (show_surfaces) {
-		for (int i = 0; i < surfaces.size(); ++i) {
+		for (uint i = 0; i < surfaces.size(); ++i) {
 			surfaces[i]->show();
 		}
 	}
