@@ -9,23 +9,25 @@
 #include "shader/ShaderManager.h"
 #include "noise/Perlin.h"
 #include "sky/SkyDome.h"
+#include "camera/Camera.h"
 
 #define USE_PERLIN 1
 #define DEBUG_CAMERA 0
 
 noise::Perlin * perlin_noise;
 sky::SkyDome * skyDome;
+Camera * camera;
 
-static const float TO_RAD = M_PI / 180.0;
+bool camera_update_pending = false;
+bool mouse_left_click = false;
 
-float deltha = 0.0;
-float theta = 0.0;
-float camera_ray = 6;
+GLfloat delta_vertical_angle = 0.0;
+GLfloat delta_horizontal_angle = 0.0;
+GLfloat delta_front_back = 0.0;
+GLfloat delta_left_right = 0.0;
 
-float prev_deltha = -1.0;
-float prev_theta = -1.0;
-
-float x, y, z;
+GLfloat prev_mouse_x = 0.0;
+GLfloat prev_mouse_y = 0.0;
 
 GLint loc_time;
 GLint loc_octaves;
@@ -60,32 +62,22 @@ float elapsed_time = 1;
 
 void renderScene(void) {
 
-	if (prev_deltha != deltha || prev_theta != theta) {
-		float theta_rad = theta * TO_RAD;
-		float deltha_rad = deltha * TO_RAD * -1;
+	glLoadIdentity();
 
-		float cos_x_angle = cos(theta_rad);
-		float cos_y_angle = cos(deltha_rad);
+	if (camera_update_pending) {
+		camera->rotate(delta_horizontal_angle, delta_vertical_angle);
+		camera->move(delta_front_back, delta_left_right);
 
-		float sin_x_angle = sin(theta_rad);
-		float sin_y_angle = sin(deltha_rad);
+		delta_horizontal_angle = 0.0;
+		delta_vertical_angle = 0.0;
+		delta_front_back = 0.0;
+		delta_left_right = 0.0;
 
-		x = camera_ray * sin_x_angle * sin_y_angle;
-		y = camera_ray * cos_x_angle;
-		z = camera_ray * sin_x_angle * cos_y_angle;
-
-		if (DEBUG_CAMERA) {
-			std::cout << "(x, y, z) => (" << x << ", " << y << ", " << z
-					<< ")\n";
-		}
-
-		prev_deltha = deltha;
-		prev_theta = theta;
+		camera_update_pending = false;
 	}
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glLoadIdentity();
-	gluLookAt(x, y, z, 0.0, 0.0, 0.0, 0.0f, 1.0f, 0.0f);
+	camera->update(elapsed_time);
 
 	glLightfv(GL_LIGHT0, GL_POSITION, lpos);
 	glRotatef(elapsed_time, 0, 1, 0);
@@ -101,11 +93,7 @@ void renderScene(void) {
 	glutSwapBuffers();
 }
 
-void processNormalKeys(unsigned char key, int x, int y) {
 
-	if (key == 27)
-		exit(0);
-}
 
 #define printOpenGLError() printOglError(__FILE__, __LINE__)
 
@@ -124,6 +112,32 @@ int printOglError(char *file, int line) {
 		glErr = glGetError();
 	}
 	return retCode;
+}
+
+void mouseClickEvent(int button, int state, int x, int y) {
+	if (button == GLUT_LEFT_BUTTON) {
+		if (state == GLUT_DOWN) {
+			mouse_left_click = true;
+
+			prev_mouse_x = x;
+			prev_mouse_y = y;
+		}
+		else  {
+			mouse_left_click = false;
+		}
+	}
+}
+
+void mouseMoveEvent(int x, int y) {
+	if (mouse_left_click) {
+		delta_horizontal_angle = (prev_mouse_x - x) * 360 / 320;
+		delta_vertical_angle = (prev_mouse_y - y) * 360 / 320;
+
+		prev_mouse_x = x;
+		prev_mouse_y = y;
+
+		camera_update_pending = true;
+	}
 }
 
 void printShaderInfoLog(GLuint obj) {
@@ -158,20 +172,49 @@ void printProgramInfoLog(GLuint obj) {
 	}
 }
 
+void processNormalKeys(unsigned char key, int x, int y) {
+
+	switch (key) {
+		case 27:
+			exit(0);
+			break;
+		case 'w':
+			delta_front_back = 1;
+			camera_update_pending = true;
+			break;
+		case 's':
+			delta_front_back = -1;
+			camera_update_pending = true;
+			break;
+		case 'a':
+			delta_left_right = 1;
+			camera_update_pending = true;
+			break;
+		case 'd':
+			delta_left_right = -1;
+			camera_update_pending = true;
+			break;
+	}
+}
+
 void specialKeyFuncton(int key, int x, int y) {
 
 	switch (key) {
 		case GLUT_KEY_UP:
-			theta += 1.0;
+			delta_front_back = 1;
+			camera_update_pending = true;
 			break;
 		case GLUT_KEY_DOWN:
-			theta -= 1.0;
+			delta_front_back = -1;
+			camera_update_pending = true;
 			break;
 		case GLUT_KEY_LEFT:
-			deltha += 1.0;
+			delta_left_right = 1;
+			camera_update_pending = true;
 			break;
 		case GLUT_KEY_RIGHT:
-			deltha -= 1.0;
+			delta_left_right = -1;
+			camera_update_pending = true;
 			break;
 	}
 }
@@ -190,17 +233,23 @@ int main(int argc, char **argv) {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(100, 100);
-	glutInitWindowSize(320, 320);
+	glutInitWindowSize(500, 500);
 	glutCreateWindow("Procedural Cloud Generator");
 
 	perlin_noise = new noise::Perlin(20);
-	skyDome = new sky::SkyDome(1.5, 20, 5);
+	skyDome = new sky::SkyDome(1.5, 10);
+	camera = new Camera(0, 0, -5, 90, 90);
 
 	glutDisplayFunc(renderScene);
 	glutIdleFunc(renderScene);
 	glutReshapeFunc(changeSize);
 	glutKeyboardFunc(processNormalKeys);
 	glutSpecialFunc(specialKeyFuncton);
+
+	glutMouseFunc(mouseClickEvent);
+	glutMotionFunc(mouseMoveEvent);
+
+	glutSetCursor(GLUT_CURSOR_NONE);
 
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(1.0, 1.0, 1.0, 1.0);
