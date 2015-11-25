@@ -20,6 +20,10 @@ GLint ShaderManager::createShader(std::string file_location, ShaderType type,
 		shader = glCreateShader(GL_VERTEX_SHADER);
 	}
 
+#if DEBUG_SHADER
+	ShaderManager::printShaderInfoLog(file_location, shader);
+#endif
+
 	char *shader_text = textFileRead(file_location.c_str());
 
 	if (shader_text == NULL) {
@@ -48,6 +52,10 @@ GLint ShaderManager::createShader(std::string file_location, ShaderType type,
 	glAttachShader(program, shader);
 	glLinkProgram(program);
 
+#if DEBUG_SHADER
+	printProgramInfoLog(program);
+#endif
+
 	return program;
 }
 
@@ -71,4 +79,41 @@ void ShaderManager::setProgramState(const GLint program, bool state) {
 		glUseProgram(0);
 	}
 }
+
+#if DEBUG_SHADER
+
+void ShaderManager::printShaderInfoLog(std::string name, GLuint object) {
+		int infologLength = 0;
+		int charsWritten = 0;
+		char *infoLog;
+
+		glGetShaderiv(object, GL_INFO_LOG_LENGTH, &infologLength);
+
+		if (infologLength > 0) {
+			infoLog = (char *) malloc(infologLength);
+			glGetShaderInfoLog(object, infologLength, &charsWritten, infoLog);
+			std::cout << "Shader " << name << " log:\n\t" << infoLog;
+
+			free(infoLog);
+		}
+	}
+
+
+void ShaderManager::printProgramInfoLog(GLuint obj) {
+	int infologLength = 0;
+	int charsWritten = 0;
+	char *infoLog;
+
+	glGetProgramiv(obj, GL_INFO_LOG_LENGTH, &infologLength);
+
+	if (infologLength > 0) {
+		infoLog = (char *) malloc(infologLength);
+		glGetProgramInfoLog(obj, infologLength, &charsWritten, infoLog);
+		std::cout << "Program log: \n\t" << infoLog;
+
+		free(infoLog);
+	}
+}
+#endif
+
 } /* namespace shader */

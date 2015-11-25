@@ -93,8 +93,6 @@ void renderScene(void) {
 	glutSwapBuffers();
 }
 
-
-
 #define printOpenGLError() printOglError(__FILE__, __LINE__)
 
 int printOglError(char *file, int line) {
@@ -137,38 +135,6 @@ void mouseMoveEvent(int x, int y) {
 		prev_mouse_y = y;
 
 		camera_update_pending = true;
-	}
-}
-
-void printShaderInfoLog(GLuint obj) {
-	int infologLength = 0;
-	int charsWritten = 0;
-	char *infoLog;
-
-	glGetShaderiv(obj, GL_INFO_LOG_LENGTH, &infologLength);
-
-	if (infologLength > 0) {
-		infoLog = (char *) malloc(infologLength);
-		glGetShaderInfoLog(obj, infologLength, &charsWritten, infoLog);
-		std::cout << infoLog;
-
-		free(infoLog);
-	}
-}
-
-void printProgramInfoLog(GLuint obj) {
-	int infologLength = 0;
-	int charsWritten = 0;
-	char *infoLog;
-
-	glGetProgramiv(obj, GL_INFO_LOG_LENGTH, &infologLength);
-
-	if (infologLength > 0) {
-		infoLog = (char *) malloc(infologLength);
-		glGetProgramInfoLog(obj, infologLength, &charsWritten, infoLog);
-		std::cout << infoLog;
-
-		free(infoLog);
 	}
 }
 
@@ -237,8 +203,8 @@ int main(int argc, char **argv) {
 	glutCreateWindow("Procedural Cloud Generator");
 
 	perlin_noise = new noise::Perlin(20);
-	skyDome = new sky::SkyDome(1.5, 10, 5);
-	camera = new Camera(0, 0, -5, 90, 90);
+	skyDome = new sky::SkyDome(1.5, 30, 10);
+	camera = new Camera(0, 0, 0, 90, 90);
 
 	glutDisplayFunc(renderScene);
 	glutIdleFunc(renderScene);

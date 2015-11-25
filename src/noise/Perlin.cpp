@@ -11,7 +11,8 @@ namespace noise {
 
 std::string Perlin::TIME_UNIFORM = "time";
 std::string Perlin::OCTAVES_UNIFORM = "octaves";
-std::string Perlin::FRAGMENT_FILE = "src/shader/perlin_noise.frag";
+//std::string Perlin::FRAGMENT_FILE = "src/shader/perlin_noise.frag";
+std::string Perlin::FRAGMENT_FILE = "src/shader/perlin_noise3d.frag";
 
 Perlin::Perlin(int octaves) {
 	this->octaves = octaves;

@@ -14,6 +14,8 @@
 #ifndef SHADERMANAGER_H_
 #define SHADERMANAGER_H_
 
+#define DEBUG_SHADER 0
+
 namespace shader {
 
 enum class ShaderType { VERTEX, FRAGMENT };
@@ -27,6 +29,13 @@ public:
 	static void setUniformFloatValue(const GLint, float);
 
 	static void setProgramState(const GLint, bool);
+
+private:
+#if DEBUG_SHADER
+	static void printShaderInfoLog(std::string name, GLuint object);
+	static void printProgramInfoLog(GLuint obj);
+#endif
+
 };
 
 } /* namespace shader */
