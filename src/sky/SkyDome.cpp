@@ -36,7 +36,8 @@ SkyDome::SkyDome(GLfloat radius, int horizontal_sections,
 }
 
 SkyDome::~SkyDome() {
-
+	delete [] vertex_index;
+	delete [] vertex;
 }
 
 void SkyDome::show() {

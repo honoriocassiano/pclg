@@ -11,8 +11,7 @@ namespace noise {
 
 std::string Perlin::TIME_UNIFORM = "time";
 std::string Perlin::OCTAVES_UNIFORM = "octaves";
-//std::string Perlin::FRAGMENT_FILE = "src/shader/perlin_noise.frag";
-std::string Perlin::FRAGMENT_FILE = "src/shader/perlin_noise3d.frag";
+std::string Perlin::FRAGMENT_FILE = "src/shader/perlin_noise.frag";
 
 Perlin::Perlin(int octaves) {
 	this->octaves = octaves;
@@ -23,7 +22,7 @@ Perlin::Perlin(int octaves) {
 }
 
 Perlin::~Perlin() {
-	// TODO Auto-generated destructor stub
+	glDeleteProgram(program);
 }
 
 void Perlin::update(float time, bool update_surfaces) {

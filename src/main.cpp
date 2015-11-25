@@ -92,6 +92,12 @@ void renderScene(void) {
 	glutSwapBuffers();
 }
 
+void exit_func() {
+	delete perlin_noise;
+	delete camera;
+	delete skyDome;
+}
+
 #define printOpenGLError() printOglError(__FILE__, __LINE__)
 
 int printOglError(char *file, int line) {
@@ -141,6 +147,7 @@ void processNormalKeys(unsigned char key, int x, int y) {
 
 	switch (key) {
 		case 27:
+			exit_func();
 			exit(0);
 			break;
 		case 'w':
