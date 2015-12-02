@@ -1,6 +1,8 @@
+uniform int octaves;
+
 uniform float cutoff;
 uniform float time;
-uniform int octaves;
+uniform float scale;
 
 varying vec3 position;
  

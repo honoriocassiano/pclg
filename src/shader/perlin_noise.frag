@@ -1,5 +1,8 @@
+uniform int octaves;
+
 uniform float time;
 uniform float cutoff;
+uniform float scale;
 
 varying vec3 position;
 
@@ -174,8 +177,8 @@ void main() {
   float n = 0.0;
 
   // Turbulence loop
-  for(i = 0; i < 8; i++) {
-  	n = cos(n + cnoise(  (pow(2.0, i) * (position * 20.0 + 50.0 * vec3(time, time, time) )) / pow(3.0, float(i)) ));
+  for(i = 0; i < octaves; i++) {
+  	n = cos(n + cnoise(  (pow(2.0, i) * (position * scale + 50.0 * vec3(time, time, time) )) / pow(3.0, float(i)) ));
   }
 
   if(n < cutoff) {
