@@ -11,13 +11,17 @@ namespace noise {
 
 std::string Perlin::TIME_UNIFORM = "time";
 std::string Perlin::OCTAVES_UNIFORM = "octaves";
+std::string Perlin::CUTOFF_UNIFORM = "cutoff";
+std::string Perlin::VERTEX_FILE = "src/shader/perlin_noise.vert";
 std::string Perlin::FRAGMENT_FILE = "src/shader/perlin_noise.frag";
 
-Perlin::Perlin(int octaves) {
+Perlin::Perlin(int octaves, GLfloat cutoff) {
 	this->octaves = octaves;
+	this->cutoff = cutoff;
 	this->octaves_location = 0;
-	this->shader = 0;
 	this->time_location = 0;
+	this->cutoff_location = 0;
+	this->shader = 0;
 	this->program = 0;
 }
 
@@ -31,6 +35,7 @@ void Perlin::update(float time, bool update_surfaces) {
 
 	shader::ShaderManager::setUniformIntValue(octaves_location, octaves);
 	shader::ShaderManager::setUniformFloatValue(time_location, time);
+	shader::ShaderManager::setUniformFloatValue(cutoff_location, cutoff);
 
 	if (update_surfaces) {
 		for (uint i = 0; i < surfaces.size(); ++i) {
@@ -45,10 +50,13 @@ void Perlin::show(bool show_surfaces) {
 	program = shader::ShaderManager::createShader(FRAGMENT_FILE,
 			shader::ShaderType::FRAGMENT);
 
+	shader::ShaderManager::createShader(VERTEX_FILE, shader::ShaderType::VERTEX, program);
+
 	octaves_location = shader::ShaderManager::getUniformLocation(program,
 			OCTAVES_UNIFORM);
 	time_location = shader::ShaderManager::getUniformLocation(program,
 			TIME_UNIFORM);
+	cutoff_location = shader::ShaderManager::getUniformLocation(program, CUTOFF_UNIFORM);
 
 	shader::ShaderManager::setUniformIntValue(octaves_location, octaves);
 
@@ -65,6 +73,14 @@ void Perlin::show(bool show_surfaces) {
 
 void Perlin::apply_to(sky::Surface * surface) {
 	surfaces.push_back(surface);
+}
+
+GLfloat Perlin::getCutoff() {
+	return cutoff;
+}
+
+void Perlin::setCutoff(GLfloat cutoff) {
+	this->cutoff = cutoff;
 }
 
 }

@@ -1,4 +1,5 @@
 uniform float time;
+uniform float cutoff;
 
 varying vec3 position;
 
@@ -172,11 +173,10 @@ void main() {
   int i = 0;
   float n = 0.0;
 
-  for(i = 0; i < 5; i++) {
-    n += cnoise(  (pow(2.0, i) * (gl_FragCoord.xyz + 50.0 * vec3(time, time, time) )) / ((float(i) + 1.0) * 40.0) );
+  // Turbulence loop
+  for(i = 0; i < 8; i++) {
+  	n = cos(n + cnoise(  (pow(2.0, i) * (position * 20.0 + 50.0 * vec3(time, time, time) )) / pow(3.0, float(i)) ));
   }
-
-  float cutoff = 0.5;
 
   if(n < cutoff) {
       n = 0.0;
@@ -184,5 +184,6 @@ void main() {
       n -= cutoff;
   }
 
-  gl_FragColor = (vec4(1.0, 1.0, 1.0, 1.0) - vec4(0.0, 0.6, 1.0, 1.0)) * n + vec4(0.0, 0.6, 1.0, 1.0);
+  // Sky Blue: rgba(0.4, 0.6, 1.0, 1.0) 
+  gl_FragColor = (vec4(1.0, 1.0, 1.0, 1.0) - vec4(0.4, 0.6, 1.0, 1.0)) * n + vec4(0.4, 0.6, 1.0, 1.0);
 }
