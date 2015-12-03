@@ -10,6 +10,10 @@
 #include <GL/glew.h>
 #include <iostream>
 
+#define DEBUG_POINTS 0
+#define DEBUG_INDEX 0
+#define DEBUG_GLEW 0
+
 namespace sky {
 
 GLfloat SkyDome::to_rad = M_PI / 180.0;
@@ -24,9 +28,8 @@ SkyDome::SkyDome(GLfloat radius, int horizontal_sections,
 	step_circle_angle = 360.0 / h_sections;
 	step_height_angle = 90.0 / v_sections;
 
-	//Size of vertex and index vectors
-	this->vertex_size = h_sections * v_sections * 3;
-	this->index_size = 6 * h_sections * (v_sections - 1);
+	this->vertex_size = h_sections * (v_sections + 1) * 3;
+	this->index_size = 6 * h_sections * v_sections;
 
 	this->vertex = new GLfloat[vertex_size];
 	this->vertex_index = new GLuint[index_size];
@@ -143,9 +146,9 @@ void SkyDome::makePoints() {
 
 	int counter = 0;
 
-	for (int i = v_sections; i > 0; --i) {
+	for (int i = 0; i <= v_sections; ++i) {
 
-		GLfloat height_angle = 90 - i * step_height_angle;
+		GLfloat height_angle = i * step_height_angle;
 
 		GLfloat height_angle_rad = height_angle * to_rad;
 
@@ -155,8 +158,8 @@ void SkyDome::makePoints() {
 			GLfloat circle_angle_rad = circle_angle * to_rad;
 
 			GLfloat x = radius * sin(height_angle_rad) * cos(circle_angle_rad);
-			GLfloat y = radius * sin(height_angle_rad) * sin(circle_angle_rad);
-			GLfloat z = radius * cos(height_angle_rad);
+			GLfloat z = radius * sin(height_angle_rad) * sin(circle_angle_rad);
+			GLfloat y = radius * cos(height_angle_rad);
 
 			vertex[counter] = x;
 			vertex[counter + 1] = y;

@@ -89,6 +89,14 @@ void renderScene(void) {
 		skyDome->update(elapsed_time);
 	}
 
+	glColor3f(0, 1.0, 0);
+	glBegin(GL_QUADS);
+	glVertex3f(30.0, 0.0, -30.0);
+	glVertex3f(-30.0, 0.0, -30.0);
+	glVertex3f(-30.0, 0.0, 30.0);
+	glVertex3f(30.0, 0.0, 30.0);
+	glEnd();
+
 	glutSwapBuffers();
 }
 
@@ -124,8 +132,7 @@ void mouseClickEvent(int button, int state, int x, int y) {
 
 			prev_mouse_x = x;
 			prev_mouse_y = y;
-		}
-		else  {
+		} else {
 			mouse_left_click = false;
 		}
 	}
@@ -208,9 +215,9 @@ int main(int argc, char **argv) {
 	glutInitWindowSize(500, 500);
 	glutCreateWindow("Procedural Cloud Generator");
 
-	perlin_noise = new noise::Perlin(8, 20.0, 0.3);
-	skyDome = new sky::SkyDome(1.5, 30, 20);
-	camera = new Camera(0, 0, 0, 0, 180);
+	perlin_noise = new noise::Perlin(8, 5.0, 0.3);
+	skyDome = new sky::SkyDome(30, 30, 20);
+	camera = new Camera(0, 5, 0, 0, 180);
 
 	glutDisplayFunc(renderScene);
 	glutIdleFunc(renderScene);

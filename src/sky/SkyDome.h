@@ -14,10 +14,6 @@
 #ifndef SKYDOME_H_
 #define SKYDOME_H_
 
-#define DEBUG_POINTS 0
-#define DEBUG_INDEX 0
-#define DEBUG_GLEW 0
-
 namespace sky {
 
 class SkyDome: public Surface {
