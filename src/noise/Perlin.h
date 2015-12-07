@@ -20,7 +20,7 @@ namespace noise {
 
 class Perlin {
 public:
-	Perlin(int octaves, GLfloat scale, GLfloat cutoff);
+	Perlin(int octaves, GLfloat scale, GLfloat cutoff, GLfloat horizon);
 	virtual ~Perlin();
 
 	GLfloat getCutoff();
@@ -28,17 +28,25 @@ public:
 	void update(float, bool = true);
 	void apply_to(sky::Surface *);
 	void show(bool = true);
+	void disable();
+	void enable();
+	bool is_enabled();
 
 private:
+
+	bool _is_enabled;
+
 	std::vector<sky::Surface *> surfaces;
 	int octaves;
 	GLfloat cutoff;
 	GLfloat scale;
+	GLfloat horizon;
 
 	GLint time_location;
 	GLint octaves_location;
 	GLint cutoff_location;
 	GLint scale_location;
+	GLint horizon_location;
 
 	GLuint program;
 
@@ -46,6 +54,7 @@ private:
 	static std::string OCTAVES_UNIFORM;
 	static std::string CUTOFF_UNIFORM;
 	static std::string SCALE_UNIFORM;
+	static std::string HORIZON_UNIFORM;
 	static std::string FRAGMENT_FILE;
 	static std::string VERTEX_FILE;
 };

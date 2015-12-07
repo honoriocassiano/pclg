@@ -36,6 +36,8 @@ SkyDome::SkyDome(GLfloat radius, int horizontal_sections,
 
 	vertex_id = 0;
 	vertex_index_id = 0;
+
+	perlin = new noise::Perlin(8, 5.0, 0.3, (radius * 0.5));
 }
 
 SkyDome::~SkyDome() {
@@ -76,6 +78,7 @@ void SkyDome::show() {
 
 #endif
 
+	perlin->show();
 	update(0);
 }
 
@@ -112,6 +115,9 @@ void SkyDome::makeIndexes() {
 
 void SkyDome::update(float time) {
 
+	perlin->enable();
+	perlin->update(time, false);
+
 	glPolygonMode( GL_BACK, GL_FILL);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vertex_id);
@@ -125,6 +131,8 @@ void SkyDome::update(float time) {
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	perlin->disable();
 }
 
 void SkyDome::makeVBO() {

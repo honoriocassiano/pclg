@@ -27,6 +27,8 @@ public:
 private:
 	static GLfloat to_rad;
 
+	noise::Perlin * perlin;
+
 	GLfloat radius;
 	int v_sections;
 	int h_sections;

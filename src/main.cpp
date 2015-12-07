@@ -11,9 +11,6 @@
 #include "sky/SkyDome.h"
 #include "camera/Camera.h"
 
-#define USE_PERLIN 1
-
-noise::Perlin * perlin_noise;
 sky::SkyDome * skyDome;
 Camera * camera;
 
@@ -83,11 +80,7 @@ void renderScene(void) {
 
 	elapsed_time += 0.001;
 
-	if (USE_PERLIN) {
-		perlin_noise->update(elapsed_time);
-	} else {
-		skyDome->update(elapsed_time);
-	}
+	skyDome->update(elapsed_time);
 
 	glColor3f(0, 1.0, 0);
 	glBegin(GL_QUADS);
@@ -101,7 +94,6 @@ void renderScene(void) {
 }
 
 void exit_func() {
-	delete perlin_noise;
 	delete camera;
 	delete skyDome;
 }
@@ -199,13 +191,7 @@ void specialKeyFuncton(int key, int x, int y) {
 }
 
 void showPerlin() {
-
-	if (USE_PERLIN) {
-		perlin_noise->apply_to(skyDome);
-		perlin_noise->show();
-	} else {
-		skyDome->show();
-	}
+	skyDome->show();
 }
 
 int main(int argc, char **argv) {
@@ -215,7 +201,6 @@ int main(int argc, char **argv) {
 	glutInitWindowSize(500, 500);
 	glutCreateWindow("Procedural Cloud Generator");
 
-	perlin_noise = new noise::Perlin(8, 5.0, 0.3);
 	skyDome = new sky::SkyDome(30, 30, 20);
 	camera = new Camera(0, 5, 0, 0, 180);
 

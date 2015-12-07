@@ -4,6 +4,7 @@ uniform float time;
 uniform float cutoff;
 uniform float scale;
 
+varying vec4 color;
 varying vec3 position;
 
 vec3 mod289(vec3 x)
@@ -188,5 +189,5 @@ void main() {
   }
 
   // Sky Blue: rgba(0.4, 0.6, 1.0, 1.0) 
-  gl_FragColor = (vec4(1.0, 1.0, 1.0, 1.0) - vec4(0.4, 0.6, 1.0, 1.0)) * n + vec4(0.4, 0.6, 1.0, 1.0);
+  gl_FragColor = (vec4(1.0, 1.0, 1.0, 1.0) - color) * n + color;
 }
